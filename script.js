@@ -21,6 +21,12 @@ Block.prototype.update = function() {
 
 }
 
+/*------------------------ Function to create random number ----------------------*/
+function random(min, max) {
+    var num = Math.floor(Math.random() * (max - min + 1)) + min;
+    return num;
+}
+
 /*--------------------- Forming and defining grids --------------------------*/
 function Grids() {
     var grid;
