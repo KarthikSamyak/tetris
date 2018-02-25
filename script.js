@@ -6,6 +6,21 @@ var height = canvas.height;
 
 var grids = [];
 
+function Block(x, y, id, color) {
+    this.x = x;
+    this.y = y;
+    this.id = id;
+    this.color = color;
+}
+
+Block.prototype.draw = function() {
+    ctx.fillRect(this.x,this.y,40,40);   
+}
+
+Block.prototype.update = function() {
+
+}
+
 /*--------------------- Forming and defining grids --------------------------*/
 function Grids() {
     var grid;
@@ -21,23 +36,17 @@ function Grids() {
     }
 }
 
-function checkGrid() {
-
-}
-
-function Block(x, y, id, color) {
-    this.x = x;
-    this.y = y;
-    this.id = id;
-    this.color = color;
-}
-
-Block.prototype.draw = function() {
-    ctx.fillRect(this.x,this.y,40,40);   
-}
-
-Block.prototype.update = function() {
-
+/*-------------------- Checking each grid weather it is empty or not ----------------------*/ 
+function checkGrid(x,y) {
+    for(let i=0; i<grids.length; i++) {
+        if(grids[i].x == x && grids[i].y == y) {
+            if(grids[i].free == true) {
+                return true;
+            }else {
+                return false;
+            }
+        }
+    }
 }
 
 var testBlock = new Block(40, 0, 4, 'blue');
