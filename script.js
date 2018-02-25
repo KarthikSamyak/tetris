@@ -18,6 +18,13 @@ Block.prototype.draw = function() {
 }
 
 Block.prototype.update = function() {
+    if(checkGrid(this.x,this.y + 40)) {
+        this.y = this.y + 40;
+    }
+    else {
+        this.y = this.y;
+        updateGrid(this.x,this.y);
+    }
 
 }
 
@@ -51,6 +58,15 @@ function checkGrid(x,y) {
             }else {
                 return false;
             }
+        }
+    }
+}
+
+/*--------------------- update grid state --------------------------------*/
+function updateGrid(x,y) {
+    for(let i=0; i<grids.length; i++) {
+        if(grids[i].x == x && grids[i].y == y) {
+            grids[i].free == false;
         }
     }
 }
