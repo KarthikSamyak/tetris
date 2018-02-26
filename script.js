@@ -6,8 +6,9 @@ var height = canvas.height;
 
 var grids = [];
 var tetriminos = [];
+var colorArray = ["red","green","blue","yellow"]
 
-var tBlock = new Block(randomXY(40,600),0, random(0,4),"red");
+var tBlock = new Block(randomXY(40,600),0, random(0,4),colorArray[random(0,4)]);
 tetriminos.push(tBlock);
 
 document.onkeydown = function(e) {
@@ -25,7 +26,7 @@ document.onkeydown = function(e) {
         }
     }
     else if (e.keyCode == '39') { // right arrow
-        if((tBlock.x < 520) && checkGrid(tBlock.x + 40,tBlock.y)){
+        if((tBlock.x < 560) && checkGrid(tBlock.x + 40,tBlock.y)){
             tBlock.clear();
             tBlock.x = tBlock.x + 40;
             tBlock.draw();
@@ -33,6 +34,7 @@ document.onkeydown = function(e) {
     }
 }
 
+/*---------------------------------- Block Constructor ---------------------------------*/
 function Block(x, y, id, color) {
     this.x = x;
     this.y = y;
@@ -75,7 +77,7 @@ function init() {
 
 /*-------------------- function to create new tetrimino when predecessor occupies a grid-----------*/
 function createNewTetrimino() {
-    tBlock = new Block(randomXY(40,600),0, random(0,4),"red");
+    tBlock = new Block(randomXY(40,600),0, random(0,4),colorArray[random(0,4)]);
     tetriminos.push(tBlock);
 }
 
@@ -97,7 +99,7 @@ function randomXY(min, max) {
 /*----------------------------- Function for generating random number ----------------------------*/
 
 function random(min, max) {
-    var num = Math.random() * (max - min) + min;
+    var num = Math.floor(Math.random() * (max - min)) + min;
     return num;
 }
 
@@ -139,18 +141,15 @@ function updateGrid(x,y) {
     }
 }
 
-function loop() {
-    
+function loop() {  
     ctx.clearRect(0,0,600,600);   
-    for(let i=0; i<tetriminos.length; i++) {
-        
+    for(let i=0; i<tetriminos.length; i++) {      
         tetriminos[i].update();
         tetriminos[i].draw();   
     }
     setTimeout(function () {
         requestAnimationFrame(loop); 
-    }, 1500);
-    
+    }, 500);   
 }
 
 init();
