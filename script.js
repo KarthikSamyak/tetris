@@ -7,8 +7,31 @@ var height = canvas.height;
 var grids = [];
 var tetriminos = [];
 
-var tBlock = new Block(random(40,560),0, random(0,4),"red");
+var tBlock = new Block(randomXY(40,600),0, random(0,4),"red");
 tetriminos.push(tBlock);
+
+document.onkeydown = function(e) {
+    if (e.keyCode == '38') { // up arrow
+        
+    }
+    else if (e.keyCode == '40') { // down arrow
+
+    }
+    else if (e.keyCode == '37') { // left arrow
+        if((tBlock.x > 0) && checkGrid(tBlock.x - 40,tBlock.y)) {
+            tBlock.clear();
+            tBlock.x = tBlock.x - 40;
+            tBlock.draw();
+        }
+    }
+    else if (e.keyCode == '39') { // right arrow
+        if((tBlock.x < 520) && checkGrid(tBlock.x + 40,tBlock.y)){
+            tBlock.clear();
+            tBlock.x = tBlock.x + 40;
+            tBlock.draw();
+        }
+    }
+}
 
 function Block(x, y, id, color) {
     this.x = x;
@@ -18,7 +41,12 @@ function Block(x, y, id, color) {
     this.fixed = false;
 }
 
-Block.prototype.draw = function() {
+Block.prototype.clear = function() {
+    ctx.clearRect(this.x,this.y,40,40);
+}
+
+Block.prototype.draw = function() {  
+    ctx.fillStyle=this.color;
     ctx.fillRect(this.x,this.y,40,40);   
 }
 
@@ -43,17 +71,16 @@ Block.prototype.update = function() {
 function init() {
     Grids();
     loop();
-
 }
 
 /*-------------------- function to create new tetrimino when predecessor occupies a grid-----------*/
 function createNewTetrimino() {
-    tBlock = new Block(random(40,560),0, random(0,4),"red");
+    tBlock = new Block(randomXY(40,600),0, random(0,4),"red");
     tetriminos.push(tBlock);
 }
 
-/*------------------------ Function to create random number ----------------------*/
-function random(min, max) {
+/*------------------------ Function to create random number in multiples of 40----------------------*/
+function randomXY(min, max) {
     var rem;
     var num = Math.floor(Math.random() * (max - min + 1)) + min;
     if(num > 40) {
@@ -65,6 +92,13 @@ function random(min, max) {
         num = num + rem;
         return num;
     }
+}
+
+/*----------------------------- Function for generating random number ----------------------------*/
+
+function random(min, max) {
+    var num = Math.random() * (max - min) + min;
+    return num;
 }
 
 
@@ -106,15 +140,17 @@ function updateGrid(x,y) {
 }
 
 function loop() {
-    ctx.clearRect(0,0,600,600);
-    debugger;
     
+    ctx.clearRect(0,0,600,600);   
     for(let i=0; i<tetriminos.length; i++) {
-        tetriminos[i].draw();
+        
         tetriminos[i].update();
+        tetriminos[i].draw();   
     }
-
-    requestAnimationFrame(loop); 
+    setTimeout(function () {
+        requestAnimationFrame(loop); 
+    }, 1500);
+    
 }
 
 init();
