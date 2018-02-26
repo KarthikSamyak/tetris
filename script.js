@@ -6,7 +6,8 @@ var height = canvas.height;
 
 var grids = [];
 var tetriminos = [];
-var colorArray = ["red","green","blue","yellow"]
+var colorArray = ["red","green","blue","yellow"];
+var gameOver = false;
 
 var tBlock = new Block(randomXY(40,600),0, random(0,4),colorArray[random(0,4)]);
 tetriminos.push(tBlock);
@@ -16,7 +17,11 @@ document.onkeydown = function(e) {
         
     }
     else if (e.keyCode == '40') { // down arrow
-
+        if((tBlock.y < 560) && checkGrid(tBlock.x,tBlock.y + 40)) {
+            tBlock.clear();
+            tBlock.y = tBlock.y + 40;
+            tBlock.draw();
+        }
     }
     else if (e.keyCode == '37') { // left arrow
         if((tBlock.x > 0) && checkGrid(tBlock.x - 40,tBlock.y)) {
@@ -57,6 +62,9 @@ Block.prototype.update = function() {
         this.y = this.y + 40;
     }
     else if(this.fixed == false) {
+        if(this.y == 40) {
+            gameOver = true;
+        }
         this.y = this.y;
         updateGrid(this.x,this.y);
         console.log(this.x, this.y);
@@ -148,7 +156,15 @@ function loop() {
         tetriminos[i].draw();   
     }
     setTimeout(function () {
-        requestAnimationFrame(loop); 
+        if(!gameOver){
+            requestAnimationFrame(loop);
+        }else {
+            ctx.fillStyle="red";
+            ctx.fillRect(0,0,600,600);
+            document.onkeydown = function() {
+                return true;
+            }
+        }         
     }, 500);   
 }
 
