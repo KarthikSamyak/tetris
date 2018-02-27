@@ -12,6 +12,27 @@ var gameOver = false;
 var tBlock = new Block(randomXY(40,600),0, random(0,4),colorArray[random(0,4)]);
 tetriminos.push(tBlock);
 
+/*------------------- functions for creating tetrimino using 2D array ------------------*/
+
+function array2D(id) {
+    var tetrimino = [];
+    if(id == 1) { // square
+        let x = randomXY(40,560);
+        tetrimino = [[x,0],[x + 40,0],[x, 40],[x + 40, 40]];
+        return tetrimino;
+    } else if(id == 2) { // horizontal bar
+        let x = randomXY(40,440);
+        tetrimino = [[x,0],[x + 40,0],[x, 40],[x + 40, 40]];
+        return tetrimino;
+    } else if(id == 3) { // vertical bar
+        let x = randomXY(40,440);
+        tetrimino = [[x,0],[x,40],[x, 80],[x, 120]];
+        return tetrimino;
+    }
+}
+
+/*------------------------ Keyboard events ------------------------------------------*/
+
 document.onkeydown = function(e) {
     if (e.keyCode == '38') { // up arrow
         
