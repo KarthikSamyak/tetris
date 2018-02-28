@@ -43,26 +43,135 @@ document.onkeydown = function(e) {
         
     }
     else if (e.keyCode == '40') { // down arrow
-        if((tBlock.y < 560) && checkGrid(tBlock.x,tBlock.y + 40)) {
+        if(checkHeight() && check()) {
             tBlock.clear();
-            tBlock.y = tBlock.y + 40;
+            console.log(tBlock.tetrimino.length);
+            for(let i=0; i<tBlock.tetrimino.length; i++) {
+                tBlock.tetrimino[i][1] = tBlock.tetrimino[i][1] + 40;
+            }
             tBlock.draw();
         }
     }
     else if (e.keyCode == '37') { // left arrow
-        if((tBlock.x > 0) && checkGrid(tBlock.x - 40,tBlock.y)) {
+        console.log(checkWidthLeft());
+        if(checkWidthLeft() && checkGridLeft()) {
             tBlock.clear();
-            tBlock.x = tBlock.x - 40;
+            for(let i=0; i<tBlock.tetrimino.length; i++) {
+                tBlock.tetrimino[i][0] = tBlock.tetrimino[i][0] - 40;
+            }
             tBlock.draw();
         }
     }
     else if (e.keyCode == '39') { // right arrow
-        if((tBlock.x < 560) && checkGrid(tBlock.x + 40,tBlock.y)){
+        if(checkWidthRight() && checkGridRight()){
             tBlock.clear();
-            tBlock.x = tBlock.x + 40;
+            for(let i=0; i<tBlock.tetrimino.length; i++) {
+                tBlock.tetrimino[i][0] = tBlock.tetrimino[i][0] + 40;
+            }
             tBlock.draw();
         }
     }
+}
+
+/*---------------------------------- Helper functions for current tBlock update on key functions ------------------------------*/
+function check() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        y = y + 40;
+        if(checkGrid(x,y)) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkGridLeft() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        x = x - 40;
+        if(checkGrid(x,y)) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkGridRight() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        x = x + 40;
+        if(checkGrid(x,y)) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkTop() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {           
+        if(tBlock.tetrimino[i][1] == 40) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkHeight() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        y = y + 40;
+        if(y < height) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkWidthLeft() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        if(x > 0) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkWidthRight() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        if(x < 560) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
 }
 
 /*---------------------------------- Block Constructor ---------------------------------*/
@@ -90,8 +199,6 @@ Block.prototype.draw = function() {
 
 Block.prototype.update = function() {
     var that = this;
-    console.log("check function:", check());
-    console.log("checkHeight function:", checkHeight());
     if(check() && checkHeight()) {
         for(let i=0; i<this.tetrimino.length; i++) {
             this.tetrimino[i][1] = this.tetrimino[i][1] + 40;
@@ -133,13 +240,12 @@ Block.prototype.update = function() {
     function checkTop() {
         for(let i=0; i<that.tetrimino.length; i++) {           
             if(that.tetrimino[i][1] == 40) {
-                continue;
+                return true;
             }
             else {
-                return false;
+               continue;
             }
         }
-        return true;
     }
 
     function checkHeight() {
@@ -234,8 +340,7 @@ function updateGrid(x,y) {
 }
 
 function loop() {  
-    ctx.clearRect(0,0,600,600);
-    debugger; 
+    ctx.clearRect(0,0,600,600); 
     for(let i=0; i<tetriminos.length; i++) {      
         tetriminos[i].update();
         tetriminos[i].draw();   
@@ -250,7 +355,7 @@ function loop() {
                 return true;
             }
         }         
-    }, 100);   
+    }, 1000);   
 }
 
 init();
