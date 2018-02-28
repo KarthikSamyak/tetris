@@ -9,7 +9,7 @@ var tetriminos = [];
 var colorArray = ["red","green","blue","yellow"];
 var gameOver = false;
 
-var tBlock = new Block(array2D(random(1,3)),random(0,4),colorArray[random(0,4)]);
+var tBlock = new Block(array2D(random(1,5)),random(0,4),colorArray[random(0,4)]);
 tetriminos.push(tBlock);
 console.log(tBlock);
 
@@ -23,11 +23,15 @@ function array2D(id) {
         return tetrimino;
     } else if(id == 2) { // horizontal bar
         let x = randomXY(40,440);
-        tetrimino = [[x,0],[x + 40,0],[x, 40],[x + 40, 40]];
+        tetrimino = [[x,0],[x + 40,0],[x + 80, 0],[x + 120, 0]];
         return tetrimino;
     } else if(id == 3) { // vertical bar
         let x = randomXY(40,440);
         tetrimino = [[x,0],[x,40],[x, 80],[x, 120]];
+        return tetrimino;
+    } else if(id == 4) { // L shape
+        let x = randomXY(40,440);
+        tetrimino = [[x,0],[x,40],[x, 80],[x + 40, 80]];
         return tetrimino;
     }
 }
@@ -164,7 +168,7 @@ function init() {
 
 /*-------------------- function to create new tetrimino when predecessor occupies a grid-----------*/
 function createNewTetrimino() {
-    tBlock = new Block(array2D(random(1,3)), random(0,4),colorArray[random(0,4)]);
+    tBlock = new Block(array2D(random(1,5)), random(0,4),colorArray[random(0,4)]);
     tetriminos.push(tBlock);
     console.log(tBlock);
 }
@@ -246,7 +250,7 @@ function loop() {
                 return true;
             }
         }         
-    }, 500);   
+    }, 100);   
 }
 
 init();
