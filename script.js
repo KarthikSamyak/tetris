@@ -9,8 +9,9 @@ var tetriminos = [];
 var colorArray = ["red","green","blue","yellow"];
 var gameOver = false;
 
-var tBlock = new Block(randomXY(40,600),0, random(0,4),colorArray[random(0,4)]);
+var tBlock = new Block(array2D(random(1,3)),random(0,4),colorArray[random(0,4)]);
 tetriminos.push(tBlock);
+console.log(tBlock);
 
 /*------------------- functions for creating tetrimino using 2D array ------------------*/
 
@@ -61,38 +62,95 @@ document.onkeydown = function(e) {
 }
 
 /*---------------------------------- Block Constructor ---------------------------------*/
-function Block(x, y, id, color) {
-    this.x = x;
-    this.y = y;
+function Block(tetrimino, id, color) {
+    this.tetrimino = tetrimino;
     this.id = id;
     this.color = color;
     this.fixed = false;
 }
 
 Block.prototype.clear = function() {
-    ctx.clearRect(this.x,this.y,40,40);
+    ctx.clearRect(this.tetrimino[0][0],this.tetrimino[0][1],40,40);
+    ctx.clearRect(this.tetrimino[1][0],this.tetrimino[1][1],40,40);
+    ctx.clearRect(this.tetrimino[2][0],this.tetrimino[2][1],40,40);
+    ctx.clearRect(this.tetrimino[3][0],this.tetrimino[3][1],40,40);
 }
 
 Block.prototype.draw = function() {  
     ctx.fillStyle=this.color;
-    ctx.fillRect(this.x,this.y,40,40);   
+    ctx.fillRect(this.tetrimino[0][0],this.tetrimino[0][1],40,40);
+    ctx.fillRect(this.tetrimino[1][0],this.tetrimino[1][1],40,40);
+    ctx.fillRect(this.tetrimino[2][0],this.tetrimino[2][1],40,40);
+    ctx.fillRect(this.tetrimino[3][0],this.tetrimino[3][1],40,40);   
 }
 
 Block.prototype.update = function() {
-    if(checkGrid(this.x,this.y + 40) && this.y + 40 < height) {
-        this.y = this.y + 40;
+    var that = this;
+    console.log("check function:", check());
+    console.log("checkHeight function:", checkHeight());
+    if(check() && checkHeight()) {
+        for(let i=0; i<this.tetrimino.length; i++) {
+            this.tetrimino[i][1] = this.tetrimino[i][1] + 40;
+        }
     }
     else if(this.fixed == false) {
-        if(this.y == 40) {
+        if(checkTop()) {
             gameOver = true;
         }
-        this.y = this.y;
-        updateGrid(this.x,this.y);
-        console.log(this.x, this.y);
+        for(let i=0; i<this.tetrimino.length; i++) {
+            this.tetrimino[i][1] = this.tetrimino[i][1];
+        }
+        for(let i=0; i<this.tetrimino.length; i++) {
+            updateGrid(this.tetrimino[i][0],this.tetrimino[i][1]);
+        }
         createNewTetrimino();
         this.fixed = true;
     } else {
-        this.y = this.y;
+        for(let i=0; i<this.tetrimino.length; i++) {
+            this.tetrimino[i][1] = this.tetrimino[i][1];
+        }
+    }
+
+   function check() {
+        for(let i=0; i<that.tetrimino.length; i++) {
+            var x = that.tetrimino[i][0];
+            var y = that.tetrimino[i][1];
+            y = y + 40;
+            if(checkGrid(x,y)) {
+                continue;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function checkTop() {
+        for(let i=0; i<that.tetrimino.length; i++) {           
+            if(that.tetrimino[i][1] == 40) {
+                continue;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function checkHeight() {
+        for(let i=0; i<that.tetrimino.length; i++) {
+            var x = that.tetrimino[i][0];
+            var y = that.tetrimino[i][1];
+            y = y + 40;
+            if(y < height) {
+                continue;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
@@ -106,8 +164,9 @@ function init() {
 
 /*-------------------- function to create new tetrimino when predecessor occupies a grid-----------*/
 function createNewTetrimino() {
-    tBlock = new Block(randomXY(40,600),0, random(0,4),colorArray[random(0,4)]);
+    tBlock = new Block(array2D(random(1,3)), random(0,4),colorArray[random(0,4)]);
     tetriminos.push(tBlock);
+    console.log(tBlock);
 }
 
 /*------------------------ Function to create random number in multiples of 40----------------------*/
@@ -171,7 +230,8 @@ function updateGrid(x,y) {
 }
 
 function loop() {  
-    ctx.clearRect(0,0,600,600);   
+    ctx.clearRect(0,0,600,600);
+    debugger; 
     for(let i=0; i<tetriminos.length; i++) {      
         tetriminos[i].update();
         tetriminos[i].draw();   
