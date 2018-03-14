@@ -74,35 +74,79 @@ document.onkeydown = function(e) {
         if(checkWidthLeft() && checkGridLeft() && checkGridRight() && checkWidthRight() && checkHeight() && check() && checkGridLeftPlus() && checkGridRightPlus() && checkPlus()) {
             if(tBlock.id == 2) { // if horizontal bar
                 tBlock.clear();
-                var count = 40;
+                var countBelow2 = 80;
+                var countAbove2 = 80;
+                var centerX = tBlock.tetrimino[2][0];
+                var centerY = tBlock.tetrimino[2][1];
+                alert(centerX);
                 for(let i=0; i<tBlock.tetrimino.length; i++) {
-                    if(0) {
-                        
+                    if(i == 2) {
+                        continue;
                     }else {
-                        tBlock.tetrimino[i][0] = tBlock.tetrimino[i][0] - count;
-                        tBlock.tetrimino[i][1] = tBlock.tetrimino[i][1] + count;
-                    }
-                    count = count + 40;                 
+                        tBlock.tetrimino[i][0] = centerX;
+                        if(i<2) {
+                            tBlock.tetrimino[i][1] = centerY - countBelow2;
+                            countBelow2 -= 40;
+                        } else if(i>2) {
+                            tBlock.tetrimino[i][1] = centerY + countAbove2;
+                            countAbove2 -= 40;
+                        }
+                    }               
                 }
                 tBlock.id = 3;
                 tBlock.draw();
             }
           else if(tBlock.id == 3) { // if vertical bar
                 tBlock.clear();
-                var count = 40;
+                var countBelow2 = 80;
+                var countAbove2 = 80;
+                var centerX = tBlock.tetrimino[2][0];
+                var centerY = tBlock.tetrimino[2][1];
                 for(let i=0; i<tBlock.tetrimino.length; i++) {
-                    if(0) {
-                        
+                    if(i == 2) {
+                        continue;
                     }else {
-                        tBlock.tetrimino[i][0] = tBlock.tetrimino[i][0] + count;
-                        tBlock.tetrimino[i][1] = tBlock.tetrimino[i][1] - count;
-                    }
-                    count = count + 40;                 
+                        tBlock.tetrimino[i][1] = centerY;
+                        if(i<2) {
+                            tBlock.tetrimino[i][0] = centerX + countBelow2;
+                            countBelow2 -= 40;
+                        } else if(i>2) {
+                            tBlock.tetrimino[i][0] = centerX - countAbove2;
+                            countAbove2 -= 40;
+                        }
+                    }                
                 }
                 tBlock.id = 2;
                 tBlock.draw();
             }
         }
+
+        if(checkWidthLeft() && checkGridLeft() && checkGridRight() && checkWidthRight() && checkHeight() && check() && checkGridLeftPlus() && checkGridRightPlus() && checkPlus()) {
+            tBlock.clear();
+            var newGrid = [];
+            var rowLength = Math.sqrt(tBlock.tetrimino.length);
+            newGrid.length = tBlock.tetrimino.length;
+
+            for (var i = 0; i < tBlock.tetrimino.length; i++)
+            {
+                //convert to x/y
+                var x = i % rowLength;
+                var y = Math.floor(i / rowLength);
+
+                //find new x/y
+                var newX = rowLength - y - 1;
+                var newY = x;
+
+                //convert back to index
+                var newPosition = newY * rowLength + newX;
+                newGrid[newPosition] = tBlock.tetrimino[i];
+            }
+            tBlock.tetrimino = JSON.parse(JSON.stringify(newGrid));
+            console.log(tBlock.tetrimino);
+            tBlock.draw();
+            
+        }
+
     }else if(e.keyCode == '9') { // tab key
         checkGridRowColor(40,40,"red");
     }
@@ -268,6 +312,9 @@ Block.prototype.clear = function() {
     ctx.clearRect(this.tetrimino[1][0],this.tetrimino[1][1],40,40);
     ctx.clearRect(this.tetrimino[2][0],this.tetrimino[2][1],40,40);
     ctx.clearRect(this.tetrimino[3][0],this.tetrimino[3][1],40,40);
+    if(this.id == 2 || this.id == 3) {
+        ctx.clearRect(this.tetrimino[4][0],this.tetrimino[4][1],40,40);
+    }
 }
 
 Block.prototype.draw = function() {  
@@ -275,7 +322,11 @@ Block.prototype.draw = function() {
     ctx.fillRect(this.tetrimino[0][0],this.tetrimino[0][1],40,40);
     ctx.fillRect(this.tetrimino[1][0],this.tetrimino[1][1],40,40);
     ctx.fillRect(this.tetrimino[2][0],this.tetrimino[2][1],40,40);
-    ctx.fillRect(this.tetrimino[3][0],this.tetrimino[3][1],40,40);   
+    ctx.fillRect(this.tetrimino[3][0],this.tetrimino[3][1],40,40);
+    if(this.id == 2 || this.id == 3) {
+        console.log("painted");
+        ctx.fillRect(this.tetrimino[4][0],this.tetrimino[4][1],40,40);   
+    }
 }
 
 Block.prototype.update = function() {
