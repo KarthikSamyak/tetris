@@ -9,7 +9,8 @@ var tetriminos = [];
 var colorArray = ["red","green","blue","yellow"];
 var gameOver = false;
 
-var tBlock = new Block(array2D(random(1,5)),random(0,4),colorArray[random(0,4)]);
+var randomNum = random(1,5);
+var tBlock = new Block(array2D(randomNum), randomNum,colorArray[random(0,4)]);
 tetriminos.push(tBlock);
 console.log(tBlock);
 
@@ -23,11 +24,11 @@ function array2D(id) {
         return tetrimino;
     } else if(id == 2) { // horizontal bar
         let x = randomXY(40,440);
-        tetrimino = [[x,0],[x + 40,0],[x + 80, 0],[x + 120, 0]];
+        tetrimino = [[x,0],[x + 40,0],[x + 80, 0],[x + 120, 0],[x + 160, 0]];
         return tetrimino;
     } else if(id == 3) { // vertical bar
         let x = randomXY(40,440);
-        tetrimino = [[x,0],[x,40],[x, 80],[x, 120]];
+        tetrimino = [[x,0],[x,40],[x, 80],[x, 120],[x,160]];
         return tetrimino;
     } else if(id == 4) { // L shape
         let x = randomXY(40,440);
@@ -45,7 +46,6 @@ document.onkeydown = function(e) {
     else if (e.keyCode == '40') { // down arrow
         if(checkHeight() && check()) {
             tBlock.clear();
-            console.log(tBlock.tetrimino.length);
             for(let i=0; i<tBlock.tetrimino.length; i++) {
                 tBlock.tetrimino[i][1] = tBlock.tetrimino[i][1] + 40;
             }
@@ -53,7 +53,6 @@ document.onkeydown = function(e) {
         }
     }
     else if (e.keyCode == '37') { // left arrow
-        console.log(checkWidthLeft());
         if(checkWidthLeft() && checkGridLeft()) {
             tBlock.clear();
             for(let i=0; i<tBlock.tetrimino.length; i++) {
@@ -71,6 +70,42 @@ document.onkeydown = function(e) {
             tBlock.draw();
         }
     }
+    else if(e.keyCode == '32') { // space bar
+        if(checkWidthLeft() && checkGridLeft() && checkGridRight() && checkWidthRight() && checkHeight() && check() && checkGridLeftPlus() && checkGridRightPlus() && checkPlus()) {
+            if(tBlock.id == 2) { // if horizontal bar
+                tBlock.clear();
+                var count = 40;
+                for(let i=0; i<tBlock.tetrimino.length; i++) {
+                    if(0) {
+                        
+                    }else {
+                        tBlock.tetrimino[i][0] = tBlock.tetrimino[i][0] - count;
+                        tBlock.tetrimino[i][1] = tBlock.tetrimino[i][1] + count;
+                    }
+                    count = count + 40;                 
+                }
+                tBlock.id = 3;
+                tBlock.draw();
+            }
+          else if(tBlock.id == 3) { // if vertical bar
+                tBlock.clear();
+                var count = 40;
+                for(let i=0; i<tBlock.tetrimino.length; i++) {
+                    if(0) {
+                        
+                    }else {
+                        tBlock.tetrimino[i][0] = tBlock.tetrimino[i][0] + count;
+                        tBlock.tetrimino[i][1] = tBlock.tetrimino[i][1] - count;
+                    }
+                    count = count + 40;                 
+                }
+                tBlock.id = 2;
+                tBlock.draw();
+            }
+        }
+    }else if(e.keyCode == '9') { // tab key
+        checkGridRowColor(40,40,"red");
+    }
 }
 
 /*---------------------------------- Helper functions for current tBlock update on key functions ------------------------------*/
@@ -79,6 +114,21 @@ function check() {
         var x = tBlock.tetrimino[i][0];
         var y = tBlock.tetrimino[i][1];
         y = y + 40;
+        if(checkGrid(x,y)) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkPlus() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        y = y + 80;
         if(checkGrid(x,y)) {
             continue;
         }
@@ -104,11 +154,41 @@ function checkGridLeft() {
     return true;
 }
 
+function checkGridLeftPlus() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        x = x - 80;
+        if(checkGrid(x,y)) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
 function checkGridRight() {
     for(let i=0; i<tBlock.tetrimino.length; i++) {
         var x = tBlock.tetrimino[i][0];
         var y = tBlock.tetrimino[i][1];
         x = x + 40;
+        if(checkGrid(x,y)) {
+            continue;
+        }
+        else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkGridRightPlus() {
+    for(let i=0; i<tBlock.tetrimino.length; i++) {
+        var x = tBlock.tetrimino[i][0];
+        var y = tBlock.tetrimino[i][1];
+        x = x + 80;
         if(checkGrid(x,y)) {
             continue;
         }
@@ -180,6 +260,7 @@ function Block(tetrimino, id, color) {
     this.id = id;
     this.color = color;
     this.fixed = false;
+    this.settle = false;
 }
 
 Block.prototype.clear = function() {
@@ -212,13 +293,21 @@ Block.prototype.update = function() {
             this.tetrimino[i][1] = this.tetrimino[i][1];
         }
         for(let i=0; i<this.tetrimino.length; i++) {
-            updateGrid(this.tetrimino[i][0],this.tetrimino[i][1]);
+            updateGrid(this.tetrimino[i][0],this.tetrimino[i][1], this.color);
+            checkGridRowColor(this.tetrimino[i][0],this.tetrimino[i][1], this.color);
         }
         createNewTetrimino();
         this.fixed = true;
     } else {
-        for(let i=0; i<this.tetrimino.length; i++) {
-            this.tetrimino[i][1] = this.tetrimino[i][1];
+        if(check() && checkHeight()) {
+            for(let i=0; i<this.tetrimino.length; i++) {
+                this.tetrimino[i][1] = this.tetrimino[i][1] + 40;
+            }
+        }
+        else{
+            for(let i=0; i<this.tetrimino.length; i++) {
+                this.tetrimino[i][1] = this.tetrimino[i][1];
+            }
         }
     }
 
@@ -274,9 +363,9 @@ function init() {
 
 /*-------------------- function to create new tetrimino when predecessor occupies a grid-----------*/
 function createNewTetrimino() {
-    tBlock = new Block(array2D(random(1,5)), random(0,4),colorArray[random(0,4)]);
+    var randomNum = random(1,5);
+    tBlock = new Block(array2D(randomNum), randomNum,colorArray[random(0,4)]);
     tetriminos.push(tBlock);
-    console.log(tBlock);
 }
 
 /*------------------------ Function to create random number in multiples of 40----------------------*/
@@ -310,7 +399,8 @@ function Grids() {
             grid = {
                 x: j,
                 y: i,
-                free: true
+                free: true,
+                color: "none"
             }
             grids.push(grid);
         }
@@ -331,10 +421,32 @@ function checkGrid(x,y) {
 }
 
 /*--------------------- update grid state --------------------------------*/
-function updateGrid(x,y) {
+function updateGrid(x,y,color) {
     for(let i=0; i<grids.length; i++) {
         if(grids[i].x == x && grids[i].y == y) {
             grids[i].free = false;
+            grids[i].color = color;
+        }
+    }
+}
+
+/*----------------------- Check for the color of single row of grids ----------------------*/
+function checkGridRowColor(x,y,color) {
+    let count = 0;
+    for(let i=0; i<grids.length; i++) {
+        if(grids[i].y == y) {
+            if(grids[i].color == color) {
+                count = count + 1;
+            }
+        }
+    }
+    if(count == 15) {
+        for(let i=0; i<grids.length; i++) {
+            console.log(grids[i]);
+            if(grids[i].y == y) {
+                alert("Grids freed");
+                grids[i].free = true;
+            }
         }
     }
 }
@@ -349,13 +461,21 @@ function loop() {
         if(!gameOver){
             requestAnimationFrame(loop);
         }else {
-            ctx.fillStyle="red";
+            ctx.fillStyle="#a5faff";
             ctx.fillRect(0,0,600,600);
+            ctx.font="50px Georgia";
+            var gradient=ctx.createLinearGradient(0,0,canvas.width,0);
+            gradient.addColorStop("0","magenta");
+            gradient.addColorStop("0.5","blue");
+            gradient.addColorStop("1.0","red");
+            // Fill with gradient
+            ctx.fillStyle=gradient;
+            ctx.fillText("Game over!!",100,250);
             document.onkeydown = function() {
                 return true;
             }
         }         
-    }, 1000);   
+    }, 600);   
 }
 
 init();
